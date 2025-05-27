@@ -1,0 +1,21 @@
+{
+    "name": "ClockApp.Bootstrap",
+    "rootNamespace": "",
+    "references": [
+        "GUID:560b04d1a97f54a4e82edc0cbbb69285",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc",
+        "GUID:15287ab1b0aea024e8d30694809c5989",
+        "GUID:581029aacc73e764190c56251a0b4246",
+        "GUID:3bcf6570344a63e42acac237cbaaa53f",
+        "GUID:ba2d363485b27ef4c8067f84cabcf6f9"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8561105e6e1a480eaf42eea81450bd6d, type: 3}
+  m_Name: AnimationSettings
+  m_EditorClassIdentifier: 
+  fadeInDuration: 0.2
+  scaleInDuration: 0.1
+  scaleInEase: 34
+  buttonPunchScale: 0.2
+  buttonPunchDuration: 0.3
+  buttonRotationDuration: 0.5
+  buttonScaleDuration: 0.1
+  buttonScaleAmount: 0.8
+  textScaleCompletionMax: 1.5
+  textScaleCompletionDuration: 0.3
+  pulseScale: 1.1
+  pulseDuration: 0.5
+  timePulseScale: 0.05
+  timePulseDuration: 0.2
+  shakeStrength: 10
+  shakeDuration: 0.5
+  shakeVibrato: 20
+  punchPositionStrength: 10
+  punchPositionDuration: 0.3
+  itemAppearDuration: 0.3
+  itemDisappearDuration: 0.2
+  itemAppearEase: 27
+  inputFadeDuration: 0.3
+  navigationButtonScale: 1.1
+  navigationButtonDuration: 0.2
+  selectedButtonColor: {r: 0.24705882, g: 0.53333336, b: 0.99607843, a: 1}
+  unselectedButtonColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  selectedTextColor: {r: 0, g: 0, b: 0, a: 1}
+  unselectedTextColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  colorChangeDuration: 0.3
+  completionColor: {r: 0, g: 1, b: 0, a: 1}
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  syncSuccessColor: {r: 0, g: 1, b: 0, a: 1}
+  syncFailColor: {r: 1, g: 0, b: 0, a: 1}
