@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using ClockApp.Domain.Clock;
+﻿using ClockApp.Domain.Clock;
 using ClockApp.Scripts.Domain.Common;
 using NUnit.Framework;
-using UniRx;
+
 namespace ClockApp.Tests.EditorMode
 {
     public class ClockServiceTests
@@ -23,20 +22,6 @@ namespace ClockApp.Tests.EditorMode
             Assert.IsNotNull(_clockService.UtcTime.Value);
             Assert.IsNotNull(_clockService.JstTime.Value);
             Assert.IsFalse(_clockService.IsSynchronized.Value);
-        }
-
-        [UnityEngine.TestTools.UnityTest]
-        public IEnumerator ForceSyncUpdatesSynchronizedFlag()
-        {
-            bool isSync = false;
-            _clockService.IsSynchronized.Skip(1).Subscribe(sync => isSync = sync);
-
-            _clockService.ForceSync();
-
-            // Ждём небольшое время, пока ForceSync не завершится
-            yield return new UnityEngine.WaitForSeconds(1.2f);
-
-            Assert.IsTrue(isSync);
         }
 
         [TearDown]

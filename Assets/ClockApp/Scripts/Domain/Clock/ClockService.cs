@@ -51,6 +51,7 @@ namespace ClockApp.Domain.Clock
             ForceSync();
             
             _updateSubscription = Observable.Interval(TimeSpan.FromSeconds(1))
+                .ObserveOnMainThread()
                 .Subscribe(_ => UpdateTimes())
                 .AddTo(_disposables);
     

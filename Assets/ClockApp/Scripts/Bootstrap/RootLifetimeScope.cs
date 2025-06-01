@@ -29,6 +29,7 @@ namespace ClockApp.Bootstrap
         
         private void RegisterInfrastructure(IContainerBuilder builder)
         {
+            builder.Register<ITimeSource, UnityTimeSource>(Lifetime.Singleton);
             builder.Register<ITimeProvider, SystemTimeProvider>(Lifetime.Singleton);
         }
         

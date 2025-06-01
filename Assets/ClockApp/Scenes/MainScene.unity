@@ -342,7 +342,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: ClockApp.Scripts.Presentation.Init.RootLifetimeScope
+    TypeName: ClockApp.Bootstrap.RootLifetimeScope
   autoRun: 1
   autoInjectGameObjects: []
   navigationManager: {fileID: 6060875997171043368}
