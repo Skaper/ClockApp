@@ -1,5 +1,7 @@
 name: Unity CI/CD
-
+permissions:
+  contents: write
+  packages: write
 on:
   push:
     branches: [ main, develop ]
@@ -163,4 +165,4 @@ jobs:
           files: ClockApp-${{ steps.read_version.outputs.version }}-build${{ github.run_number }}.zip
           generate_release_notes: true
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
