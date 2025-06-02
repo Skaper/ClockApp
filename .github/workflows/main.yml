@@ -1,0 +1,166 @@
+name: Unity CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  UNITY_VERSION: 2021.3.4f1
+  PROJECT_PATH: ''
+
+jobs:
+  test:
+    name: Test Unity Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library (для тестов)
+        uses: actions/cache@v4
+        with:
+          path: |
+            Library
+            Library/PackageCache
+            Temp
+          key: TestLibrary-${{ hashFiles('**/Assets/**', '**/Packages/**', '**/ProjectSettings/**') }}
+
+      - name: Run Unity Tests (EditMode + PlayMode)
+        uses: game-ci/unity-test-runner@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: ${{ env.UNITY_VERSION }}
+          projectPath: ${{ env.PROJECT_PATH }}
+          testMode: all
+          artifactsPath: test-results
+          coverageOptions: 'none'
+          customParameters: >-
+            -nographics
+            -batchmode
+            -disableManagedDebugger
+            -memoryLeakDetectionMode None
+            -logFile test-results/unity.log
+            -testResults test-results/results.xml
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: test-results
+          if-no-files-found: ignore
+
+  build:
+    name: Build Unity Project
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: |
+            Library
+            Library/PackageCache
+            Temp
+          key: BuildLibrary-${{ hashFiles('**/Assets/**', '**/Packages/**', '**/ProjectSettings/**') }}
+
+      - name: Get version
+        id: get_version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v*.*.* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+          else
+            VERSION="1.0.0"  # Default version
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          unityVersion: ${{ env.UNITY_VERSION }}
+          projectPath: ${{ env.PROJECT_PATH }}
+          targetPlatform: StandaloneWindows64
+          buildName: ClockApp
+          buildsPath: build
+          versioning: Custom
+          version: ${{ steps.get_version.outputs.version }}
+
+      - name: Package Build
+        run: |
+          cd build/StandaloneWindows64
+          zip -r ../../ClockApp-${{ steps.get_version.outputs.version }}-build${{ github.run_number }}.zip .
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ClockApp-${{ steps.get_version.outputs.version }}-build${{ github.run_number }}
+          path: ClockApp-${{ steps.get_version.outputs.version }}-build${{ github.run_number }}.zip
+
+      - name: Save version for release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: echo "${{ steps.get_version.outputs.version }}" > version.txt
+
+      - name: Upload version info
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-info
+          path: version.txt
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download version info
+        uses: actions/download-artifact@v4
+        with:
+          name: version-info
+
+      - name: Read version
+        id: read_version
+        run: |
+          VERSION=$(cat version.txt)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ClockApp-${{ steps.read_version.outputs.version }}-build${{ github.run_number }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ClockApp-${{ steps.read_version.outputs.version }}-build${{ github.run_number }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

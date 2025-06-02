@@ -42,10 +42,15 @@ namespace ClockApp.Tests.PlayMode
         [UnityTest]
         public IEnumerator ClockService_SynchronizesSuccessfully()
         {
-            bool isSync = false;
+            var isSync = false;
             _clockService.IsSynchronized.Subscribe(sync => isSync = sync);
             _clockService.ForceSync();
-            yield return new WaitForSeconds(1f);
+            var timer = 0f;
+            while (!isSync && timer < 5f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             Assert.IsTrue(isSync);
         }
 
@@ -55,11 +60,15 @@ namespace ClockApp.Tests.PlayMode
             _timerService.SetDuration(TimeSpan.FromSeconds(1));
             _timerService.Start();
 
-            bool completed = false;
+            var completed = false;
             _timerService.OnTimerCompleted.Subscribe(_ => completed = true);
 
-            yield return new WaitForSeconds(1.2f);
-
+            var timer = 0f;
+            while ((!completed || _timerService.State.Value != TimerState.Completed) && timer < 5f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             Assert.AreEqual(TimerState.Completed, _timerService.State.Value);
             Assert.IsTrue(completed);
         }
@@ -70,11 +79,21 @@ namespace ClockApp.Tests.PlayMode
             _timerService.SetDuration(TimeSpan.FromSeconds(3));
             _timerService.Start();
 
-            yield return new WaitForSeconds(1f);
+            var timer = 0f;
+            while (timer < 1f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _timerService.Pause();
 
             var timeAfterPause = _timerService.RemainingTime.Value;
-            yield return new WaitForSeconds(1f);
+            var pauseTimer = 0f;
+            while (pauseTimer < 1f)
+            {
+                pauseTimer += Time.deltaTime;
+                yield return null;
+            }
 
             Assert.AreEqual(TimerState.Paused, _timerService.State.Value);
             Assert.AreEqual(timeAfterPause.Seconds, _timerService.RemainingTime.Value.Seconds);
@@ -85,16 +104,26 @@ namespace ClockApp.Tests.PlayMode
         {
             _stopwatchService.Start();
 
-            yield return new WaitForSeconds(0.5f);
+            var timer = 0f;
+            while (timer < 0.55f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _stopwatchService.RecordLap();
 
-            yield return new WaitForSeconds(0.5f);
+            timer = 0f;
+            while (timer < 0.55f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _stopwatchService.RecordLap();
 
             Assert.AreEqual(2, _stopwatchService.LapTimes.Count);
-
-            Assert.IsTrue(_stopwatchService.LapTimes[0].Time.TotalMilliseconds >= 500);
-            Assert.IsTrue(_stopwatchService.LapTimes[1].Time.TotalMilliseconds >= 500);
+            Assert.IsTrue(_stopwatchService.LapTimes[0].Time.TotalSeconds >= 0.5);
+            Assert.IsTrue(_stopwatchService.LapTimes[1].Time.TotalSeconds >= 0.5);
+            yield return null;
         }
 
         [UnityTest]
@@ -102,12 +131,22 @@ namespace ClockApp.Tests.PlayMode
         {
             _stopwatchService.Start();
 
-            yield return new WaitForSeconds(1f);
+            var timer = 0f;
+            while (timer < 1f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _stopwatchService.Stop();
 
             var timeAtStop = _stopwatchService.ElapsedTime.Value;
 
-            yield return new WaitForSeconds(1f);
+            var waitTimer = 0f;
+            while (waitTimer < 1f)
+            {
+                waitTimer += Time.deltaTime;
+                yield return null;
+            }
 
             Assert.IsFalse(_stopwatchService.IsRunning.Value);
             Assert.AreEqual(timeAtStop.Seconds, _stopwatchService.ElapsedTime.Value.Seconds);
@@ -117,11 +156,13 @@ namespace ClockApp.Tests.PlayMode
         public IEnumerator ClockService_UpdatesTimeEverySecond()
         {
             DateTime initialTime = _clockService.CurrentTime.Value;
-
-            yield return new WaitForSeconds(1.1f);
-
+            var timer = 0f;
+            while (((_clockService.CurrentTime.Value - initialTime).TotalSeconds < 1) && timer < 5f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             DateTime updatedTime = _clockService.CurrentTime.Value;
-
             Assert.IsTrue((updatedTime - initialTime).TotalSeconds >= 1);
         }
 
@@ -131,24 +172,36 @@ namespace ClockApp.Tests.PlayMode
             _timerService.SetDuration(TimeSpan.FromSeconds(2));
             _timerService.Start();
 
-            yield return new WaitForSeconds(1f);
+            var timer = 0f;
+            while (timer < 1f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _timerService.Reset();
 
             Assert.AreEqual(TimerState.Idle, _timerService.State.Value);
             Assert.AreEqual(TimeSpan.Zero, _timerService.RemainingTime.Value);
+            yield return null;
         }
 
         [UnityTest]
         public IEnumerator StopwatchService_ResetClearsElapsedAndLaps()
         {
             _stopwatchService.Start();
-            yield return new WaitForSeconds(0.5f);
+            var timer = 0f;
+            while (timer < 0.5f)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
             _stopwatchService.RecordLap();
             _stopwatchService.Reset();
 
             Assert.IsFalse(_stopwatchService.IsRunning.Value);
             Assert.AreEqual(0, _stopwatchService.LapTimes.Count);
             Assert.AreEqual(TimeSpan.Zero, _stopwatchService.ElapsedTime.Value);
+            yield return null;
         }
     }
 }

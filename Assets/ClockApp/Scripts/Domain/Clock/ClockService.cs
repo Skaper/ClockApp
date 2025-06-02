@@ -46,10 +46,8 @@ namespace ClockApp.Domain.Clock
         public void StartSync()
         {
             StopSync();
-            
-            // Initial sync
             ForceSync();
-            
+            UpdateTimes();
             _updateSubscription = Observable.Interval(TimeSpan.FromSeconds(1))
                 .ObserveOnMainThread()
                 .Subscribe(_ => UpdateTimes())
