@@ -2,7 +2,7 @@
 
 A clock application built with Unity, demonstrating clean architecture and development practices.
 
-## 🚀 Features
+## Features
 
 - **World Clock** with multiple timezones (Local, UTC, JST)
 - **Timer** with countdown and audio notifications
@@ -10,7 +10,7 @@ A clock application built with Unity, demonstrating clean architecture and devel
 - **NTP Synchronization** for accurate time
 - **Smooth Animations** and responsive UI
 
-## 🏗️ Architecture
+## Architecture
 
 **Clean Architecture** implementation with clear layer separation:
 
@@ -19,7 +19,7 @@ A clock application built with Unity, demonstrating clean architecture and devel
 - **Infrastructure**: External services (Audio, NTP, Background tasks)
 - **Presentation**: MVVM pattern with reactive UI binding
 
-## 🛠️ Key Technologies
+## Key Technologies
 
 - **Unity 2022.3+** 
 - **VContainer** - Dependency injection
@@ -28,7 +28,7 @@ A clock application built with Unity, demonstrating clean architecture and devel
 - **C# Async/Await** - Asynchronous operations
 - **NTP Protocol** - Network time synchronization
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── Domain/          # Business logic and entities
@@ -38,7 +38,7 @@ A clock application built with Unity, demonstrating clean architecture and devel
 └── Bootstrap/       # DI setup and initialization
 ```
 
-## 🎯 Technical Highlights
+## Technical Highlights
 
 - **Reactive Architecture** with Observable streams
 - **Custom NTP Client** for network time sync
@@ -47,11 +47,11 @@ A clock application built with Unity, demonstrating clean architecture and devel
 - **Background Processing** with lifecycle management
 - **Assembly Definitions** for modular compilation
 
-## 📱 Platform Support
+## Platform Support
 
 Cross-platform: **iOS**, **Android**, **Desktop** (Windows/macOS/Linux)
 
-## 🧪 Code Quality
+## Code Quality
 
 - **SOLID Principles** applied throughout
 - **Clean Code** with proper separation of concerns
